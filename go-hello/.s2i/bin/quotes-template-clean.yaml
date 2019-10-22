@@ -1,0 +1,9 @@
+apiVersion: template/openshit.io/v1
+kind: Template
+metadata:
+  name: quotes
+  annotations:
+    openshift.io/display-name: Quotes APPLICATION
+    DESCRIPTION: tHE qUOTES APPLICATION PROVIDES AN http api THAT RETURNS A RANDOM, FUNNY QUOTE.
+    ICONcLASS: ICON-PHP
+

@@ -70,6 +70,7 @@ pipeline {
                     oc delete all -l app=${APP_NAME} -n ${DEV_PROJECT}
                     oc delete all -l build=${APP_NAME} -n ${DEV_PROJECT}
                     sleep 5
+<<<<<<< HEAD
                         oc new-build java:8 --name=${APP_NAME} --binary=true -n ${DEV_PROJECT}
                     '''
 
@@ -79,8 +80,19 @@ pipeline {
                             openshift.withProject(env.DEV_PROJECT) {
                                 openshift.selector("bc", "${APP_NAME}").startBuild("--from-file=${APP_NAME}/target/${APP_NAME}.jar", "--wait=true", "--follow=true")
                             }
+=======
+                    oc new-build java:8 --name=${APP_NAME} --binary=true -n ${DEV_PROJECT}
+                '''
+
+                echo '### Creating a new app in DEV env ###'
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject(env.DEV_PROJECT) {
+                            openshift.selector("bc", "${APP_NAME}").startBuild("--from-file=${APP_NAME}/target/${APP_NAME}.jar", "--wait=true", "--follow=true")
+>>>>>>> 34104a79c7165b6203f5b5e0f07af340e2418f8d
                         }
                     }
+                }
                 // TODO: Create a new OpenShift application based on the ${APP_NAME}:latest image stream
                 // TODO: Expose the ${APP_NAME} service for external access
                 sh '''
@@ -147,6 +159,7 @@ pipeline {
                 script {
                     routeHost = readFile('routehost').trim()
 
+<<<<<<< HEAD
                         openshift.withCluster() {
                             openshift.withProject( "${STAGE_PROJECT}" ) {
                                 def deployment = openshift.selector("dc", "${APP_NAME}").rollout()
@@ -156,6 +169,17 @@ pipeline {
                             }
                         echo "Deployment to Staging env is complete. Access the API endpoint at the URL http://${routeHost}/movies."
                         }
+=======
+                    openshift.withCluster() {
+                        openshift.withProject( "${STAGE_PROJECT}" ) {
+                            def deployment = openshift.selector("dc", "${APP_NAME}").rollout()
+                            openshift.selector("dc", "${APP_NAME}").related('pods').untilEach(1) {
+                                return (it.object().status.phase == "Running")
+                            }
+                        }
+                        echo "Deployment to Staging env is complete. Access the API endpoint at the URL http://${routeHost}/movies."
+                    }
+>>>>>>> 34104a79c7165b6203f5b5e0f07af340e2418f8d
                 }
             }
         }
